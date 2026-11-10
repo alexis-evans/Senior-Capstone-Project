@@ -55,8 +55,8 @@ export function Meter({ value, className }: { value: number; className?: string 
   );
 }
 
-export function CostBreakdownView({ l, fees, needsParking, usesTransit }: { l: Listing; fees: HiddenFee[]; needsParking?: boolean; usesTransit?: boolean }) {
-  const c = totalCost(l, { needsParking, usesTransit }, fees.filter((f) => f.listingId === l.id));
+export function CostBreakdownView({ l, fees, needsParking, usesTransit }: { l: Listing; fees: HiddenFee[]; needsParking?: boolean | undefined; usesTransit?: boolean | undefined }) {
+  const c = totalCost(l, { needsParking: !!needsParking, usesTransit: usesTransit ?? true }, fees.filter((f) => f.listingId === l.id));
   return (
     <div className="grid gap-4 sm:grid-cols-2">
       <div>
@@ -91,7 +91,7 @@ export function CommuteRow({ l }: { l: Listing }) {
   );
 }
 
-export function CommuteMap({ listings, selected, onSelect }: { listings: Listing[]; selected?: string; onSelect?: (id: string) => void }) {
+export function CommuteMap({ listings, selected, onSelect }: { listings: Listing[]; selected?: string | undefined; onSelect?: ((id: string) => void) | undefined }) {
   return (
     <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl border bg-map-land">
       <svg viewBox="0 0 100 62" className="absolute inset-0 h-full w-full" preserveAspectRatio="none">
@@ -131,10 +131,11 @@ const CATS: ReviewCategory[] = ["management", "maintenance", "noise", "safety", 
 export function summarizeReviews(reviews: Review[], l?: Listing) {
   if (!reviews.length) return null;
   const avg = Object.fromEntries(CATS.map((c) => [c, reviews.reduce((s, r) => s + r.ratings[c], 0) / reviews.length])) as Record<ReviewCategory, number>;
-  const sorted = [...CATS].sort((a, b) => avg[b] - avg[a]);
+  const sorted: ReviewCategory[] = [...CATS].sort((a, b) => avg[b] - avg[a]);
   const recent = l?.managementChangedOn ? reviews.filter((r) => r.date >= l.managementChangedOn!) : [];
   const older = l?.managementChangedOn ? reviews.filter((r) => r.date < l.managementChangedOn!) : [];
-  let text = `Residents rate ${sorted[0]} (${avg[sorted[0]].toFixed(1)}★) and ${sorted[1]} highest; ${sorted[5]} (${avg[sorted[5]].toFixed(1)}★) is the most common complaint.`;
+  const [a0, a1, a5] = [sorted[0]!, sorted[1]!, sorted[5]!];
+  let text = `Residents rate ${a0} (${avg[a0].toFixed(1)}★) and ${a1} highest; ${a5} (${avg[a5].toFixed(1)}★) is the most common complaint.`;
   if (recent.length && older.length) {
     text += ` Since management changed, ratings moved from ${avgRating(older).toFixed(1)}★ to ${avgRating(recent).toFixed(1)}★.`;
   }

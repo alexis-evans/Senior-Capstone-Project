@@ -306,7 +306,7 @@ export type RoommateWeights = { sleep: number; cleanliness: number; social: numb
 
 export function roommateScore(a: RoommateProfile, b: RoommateProfile, w: RoommateWeights) {
   const dims: (keyof Omit<RoommateProfile, "id" | "name" | "major" | "budget">)[] = ["sleep", "cleanliness", "social", "study"];
-  const parts: Record<string, number> = {};
+  const parts = { sleep: 0, cleanliness: 0, social: 0, study: 0, budget: 0 };
   for (const d of dims) parts[d] = 1 - Math.abs(a[d] - b[d]) / 4;
   parts.budget = Math.max(0, 1 - Math.abs(a.budget - b.budget) / 600);
   const wsum = w.sleep + w.cleanliness + w.social + w.study + w.budget || 1;
@@ -327,12 +327,12 @@ export function bestGroup(me: RoommateProfile, pool: RoommateProfile[], size: nu
     if (acc.length === n) {
       const g = [me, ...acc];
       let s = 0, c = 0;
-      for (let i = 0; i < g.length; i++) for (let j = i + 1; j < g.length; j++) { s += roommateScore(g[i], g[j], w).score; c++; }
+      for (let i = 0; i < g.length; i++) for (let j = i + 1; j < g.length; j++) { s += roommateScore(g[i]!, g[j]!, w).score; c++; }
       const avg = c ? s / c : 0;
       if (avg > best.avg) best = { members: acc.slice(), avg };
       return;
     }
-    for (let i = start; i < pool.length; i++) combo(i + 1, [...acc, pool[i]]);
+    for (let i = start; i < pool.length; i++) combo(i + 1, [...acc, pool[i]!]);
   };
   combo(0, []);
   return { members: best.members, avg: Math.round(best.avg) };
