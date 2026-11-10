@@ -81,7 +81,7 @@ function SearchPanel() {
       </aside>
 
       <div className="space-y-5">
-        <CommuteMap listings={results} selected={hover} onSelect={setOpen} />
+        <CommuteMap listings={results} selected={hover} onSelect={(id) => setOpen(id)} />
         <div className="text-sm text-muted-foreground">{results.length} of {listings.length} listings match</div>
         <div className="grid gap-4 md:grid-cols-2">
           {results.map((l) => {
@@ -145,7 +145,7 @@ function FilterSlider({ label, value, display, min, max, step, onChange }: { lab
   return (
     <div>
       <div className="mb-2 flex justify-between text-sm"><Label>{label}</Label><span className="font-semibold">{display}</span></div>
-      <Slider value={[value]} min={min} max={max} step={step} onValueChange={(v) => onChange(v[0])} />
+      <Slider value={[value]} min={min} max={max} step={step} onValueChange={(v) => onChange(v[0] ?? value)} />
     </div>
   );
 }
@@ -169,7 +169,7 @@ function Recommendations() {
         <label className="flex items-center gap-2 text-sm"><Checkbox checked={p.verifiedOnly} onCheckedChange={(v) => setP({ ...p, verifiedOnly: !!v })} />Verified owners only</label>
         <div className="border-t pt-4"><h3 className="text-lg font-semibold">Nice-to-haves</h3><p className="text-xs text-muted-foreground">How much each factor matters to you (0–5).</p></div>
         {(Object.keys(p.weights) as (keyof Preferences["weights"])[]).map((k) => (
-          <FilterSlider key={k} label={k[0].toUpperCase() + k.slice(1)} value={p.weights[k]} display={`${p.weights[k]}`} min={0} max={5} step={1} onChange={(v) => setW(k, v)} />
+          <FilterSlider key={k} label={k.charAt(0).toUpperCase() + k.slice(1)} value={p.weights[k]} display={`${p.weights[k]}`} min={0} max={5} step={1} onChange={(v) => setW(k, v)} />
         ))}
       </div>
       <div className="space-y-4">
