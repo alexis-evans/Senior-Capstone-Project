@@ -46,7 +46,7 @@ export function LeaseAnalyzer() {
   };
   const run = () => {
     const findings = analyzeLease(text);
-    if (!findings.length) return toast.error("No recognizable lease clauses found.");
+    if (!findings.length) { toast.error("No recognizable lease clauses found."); return; }
     setLeaseSummary({ fileName: name, findings });
     toast.success(`Found ${findings.length} clauses to review`);
   };
