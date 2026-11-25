@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useHomebase, uid, today } from "@/lib/homebase-store";
 import type { IncidentType, Review, ReviewCategory } from "@/lib/homebase-data";
-import { Section, Stars } from "./shared";
+import { Section, StarPicker } from "./shared";
 
 const CATS: ReviewCategory[] = ["management", "maintenance", "noise", "safety", "fees", "amenities"];
 const TYPES: IncidentType[] = ["Power outage", "Pests", "Delayed repair", "Water / plumbing", "Heating / cooling", "Safety / security"];
@@ -33,7 +33,7 @@ export function ReviewerView() {
       <div className="grid gap-6 lg:grid-cols-2">
         <Section title="Write a review">
           <div className="grid grid-cols-2 gap-3">
-            {CATS.map((c) => <div key={c} className="flex items-center justify-between text-sm capitalize">{c}<span className="flex">{[1, 2, 3, 4, 5].map((n) => <button key={n} onClick={() => setRatings({ ...ratings, [c]: n })}><Stars value={n <= ratings[c] ? 1 : 0} size={16} /></button>).map((b, i) => <span key={i} className="-ml-0">{b}</span>)}</span></div>)}
+            {CATS.map((c) => <div key={c} className="flex items-center justify-between gap-2 text-sm capitalize">{c}<StarPicker value={ratings[c]} onChange={(n) => setRatings({ ...ratings, [c]: n })} label={c} /></div>)}
           </div>
           <Textarea className="mt-3" rows={4} placeholder="What should future students know?" value={text} onChange={(e) => setText(e.target.value)} />
           <div className="mt-4 space-y-2"><Label>How your name appears</Label>

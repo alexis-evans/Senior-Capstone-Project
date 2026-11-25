@@ -25,6 +25,26 @@ export function Stars({ value, size = 14 }: { value: number; size?: number }) {
   );
 }
 
+export function StarPicker({ value, onChange, size = 16, label }: { value: number; onChange: (n: number) => void; size?: number; label?: string }) {
+  return (
+    <span role="radiogroup" aria-label={label ? `${label} rating` : "Rating"} className="inline-flex shrink-0 items-center gap-0.5">
+      {[1, 2, 3, 4, 5].map((n) => (
+        <button
+          key={n}
+          type="button"
+          role="radio"
+          aria-checked={n === value}
+          aria-label={`${n} of 5`}
+          onClick={() => onChange(n)}
+          className="rounded p-0.5 transition hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <Star style={{ width: size, height: size }} className={cn(n <= value ? "fill-warning text-warning" : "text-border")} />
+        </button>
+      ))}
+    </span>
+  );
+}
+
 export function Section({ title, children, action }: { title: string; children: React.ReactNode; action?: React.ReactNode }) {
   return (
     <section className="rounded-2xl border bg-card p-5 shadow-card">
